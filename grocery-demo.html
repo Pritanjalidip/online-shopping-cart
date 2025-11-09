@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FreshMart - Grocery Shopping Demo</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-green: #22c55e;
+      --dark-green: #16a34a;
+      --light-green: #dcfce7;
+      --white: #ffffff;
+      --light-gray: #f8fafc;
+      --gray: #64748b;
+      --dark-gray: #334155;
+      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--dark-gray);
+      line-height: 1.6;
+    }
+
+    .navbar {
+      background: var(--white);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-green);
+    }
+
+    .nav-brand i {
+      font-size: 2rem;
+    }
+
+    .cart-btn {
+      position: relative;
+      background: var(--primary-green);
+      color: var(--white);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cart-btn:hover {
+      background: var(--dark-green);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .cart-count {
+      background: var(--white);
+      color: var(--primary-green);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      position: absolute;
+      top: -8px;
+      right: -8px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .hero {
+      text-align: center;
+      background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+      color: var(--white);
+      padding: 3rem 2rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 3rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .demo-note {
+      background: #fef3c7;
+      border: 2px solid #f59e0b;
+      color: #92400e;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 2rem;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .category-section {
+      margin-bottom: 3rem;
+    }
+
+    .category-section h2 {
+      color: var(--dark-gray);
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .category-filter {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .category-btn {
+      background: var(--white);
+      border: 2px solid var(--light-green);
+      color: var(--primary-green);
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+      background: var(--primary-green);
+      color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border: 2px solid transparent;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--light-green);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: var(--light-green);
+    }
+
+    .product-info {
+      padding: 1.5rem;
+    }
+
+    .product-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--dark-gray);
+      margin-bottom: 0.5rem;
+    }
+
+    .product-description {
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    .product-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-green);
+      margin-bottom: 1rem;
+    }
+
+    .product-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      border: 2px solid var(--light-green);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .qty-btn {
+      background: var(--light-green);
+      border: none;
+      color: var(--primary-green);
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .qty-btn:hover {
+      background: var(--primary-green);
+      color: var(--white);
+    }
+
+    .qty-input {
+      border: none;
+      width: 50px;
+      text-align: center;
+      padding: 0.5rem;
+      font-weight: 600;
+      color: var(--dark-gray);
+    }
+
+    .add-to-cart-btn {
+      background: var(--primary-green);
+      color: var(--white);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .add-to-cart-btn:hover {
+      background: var(--dark-green);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .nav-container {
+        padding: 1rem;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <i class="fas fa-shopping-basket"></i>
+        <span>FreshMart</span>
+      </div>
+      <div class="nav-actions">
+        <button class="cart-btn" onclick="showDemo()">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count">3</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <header class="hero">
+      <h1><i class="fas fa-leaf"></i> Fresh Groceries Delivered</h1>
+      <p>Shop from our wide selection of fresh fruits, vegetables, and everyday essentials</p>
+    </header>
+
+    <div class="demo-note">
+      <i class="fas fa-info-circle"></i>
+      <strong>Frontend Demo:</strong> This shows the beautiful green & white grocery interface.
+      The full application with database runs at: <strong>http://localhost:8081/webapp</strong>
+    </div>
+
+    <section class="category-section">
+      <h2>Shop by Category</h2>
+      <div class="category-filter">
+        <button class="category-btn active">All Products</button>
+        <button class="category-btn">Fruits & Vegetables</button>
+        <button class="category-btn">Dairy & Eggs</button>
+        <button class="category-btn">Meat & Seafood</button>
+        <button class="category-btn">Pantry & Dry Goods</button>
+        <button class="category-btn">Beverages</button>
+        <button class="category-btn">Snacks & Treats</button>
+      </div>
+    </section>
+
+    <section class="products-section">
+      <div class="products-grid">
+        <div class="product-card">
+          <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=300" alt="Fresh Bananas"
+            class="product-image">
+          <div class="product-info">
+            <h3 class="product-name">Fresh Bananas</h3>
+            <p class="product-description">Ripe yellow bananas, perfect for snacking</p>
+            <div class="product-price">$2.99</div>
+            <div class="product-actions">
+              <div class="quantity-selector">
+                <button class="qty-btn"><i class="fas fa-minus"></i></button>
+                <input type="number" class="qty-input" value="1" min="1">
+                <button class="qty-btn"><i class="fas fa-plus"></i></button>
+              </div>
+              <button class="add-to-cart-btn" onclick="showDemo()">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=300" alt="Red Apples"
+            class="product-image">
+          <div class="product-info">
+            <h3 class="product-name">Red Apples</h3>
+            <p class="product-description">Crisp and sweet red apples</p>
+            <div class="product-price">$4.99</div>
+            <div class="product-actions">
+              <div class="quantity-selector">
+                <button class="qty-btn"><i class="fas fa-minus"></i></button>
+                <input type="number" class="qty-input" value="2" min="1">
+                <button class="qty-btn"><i class="fas fa-plus"></i></button>
+              </div>
+              <button class="add-to-cart-btn" onclick="showDemo()">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?w=300" alt="Whole Milk"
+            class="product-image">
+          <div class="product-info">
+            <h3 class="product-name">Whole Milk</h3>
+            <p class="product-description">Fresh whole milk, 1 gallon</p>
+            <div class="product-price">$3.99</div>
+            <div class="product-actions">
+              <div class="quantity-selector">
+                <button class="qty-btn"><i class="fas fa-minus"></i></button>
+                <input type="number" class="qty-input" value="1" min="1">
+                <button class="qty-btn"><i class="fas fa-plus"></i></button>
+              </div>
+              <button class="add-to-cart-btn" onclick="showDemo()">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <img src="https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=300" alt="Chicken Breast"
+            class="product-image">
+          <div class="product-info">
+            <h3 class="product-name">Chicken Breast</h3>
+            <p class="product-description">Boneless skinless chicken breast</p>
+            <div class="product-price">$8.99</div>
+            <div class="product-actions">
+              <div class="quantity-selector">
+                <button class="qty-btn"><i class="fas fa-minus"></i></button>
+                <input type="number" class="qty-input" value="1" min="1">
+                <button class="qty-btn"><i class="fas fa-plus"></i></button>
+              </div>
+              <button class="add-to-cart-btn" onclick="showDemo()">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function showDemo() {
+      alert('🛒 Grocery Shopping Cart Demo!\n\n✅ Beautiful Green & White Interface\n✅ Quantity Selection\n✅ Add to Cart Functionality\n✅ Category Filtering\n✅ Shopping Cart with Total\n✅ Order Placement\n\nFull Application: http://localhost:8081/webapp\n\nFeatures:\n• Select quantity with +/- buttons\n• Add items to cart\n• View cart with running total\n• Place orders\n• Order confirmation');
+    }
+  </script>
+</body>
+
+</html>
